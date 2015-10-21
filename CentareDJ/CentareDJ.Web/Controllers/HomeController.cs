@@ -11,7 +11,17 @@ namespace CentareDJ.Web.Controllers
         [Authorize]
         public ActionResult Index()
         {
+            ViewBag.youtubekey = ApiKeys.YoutubeDataApiKey;
             return View();
+        }
+
+        public JsonResult GetVideoInfo(string ids)
+        {
+            if(ids != String.Empty)
+            {
+
+            }
+            return new JsonResult();
         }
     }
 }

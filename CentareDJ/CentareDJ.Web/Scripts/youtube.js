@@ -2,16 +2,22 @@
     $('#AddSong').click(function () {
         var url = $('#addSongUrl').val()
         if (url) {
-            var videoId = url.split("=")[1];
-            console.log(videoId);
-            vidids.push(videoId);
+            if (url.indexOf("&") == -1) {
+                var videoId = url.split("=")[1];
+                vidids.push(videoId);
+            }
+            else {
+                var videoId = url.substring(url.indexOf("=") + 1, url.indexOf("&"));
+                console.log(videoId);
+                vidids.push(videoId);
+            }
+           
         }
         $('#addSongUrl').val("");
     });
 });
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
-
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);

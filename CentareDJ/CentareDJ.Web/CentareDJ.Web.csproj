@@ -170,6 +170,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiKeys.cs" />
+    <Compile Include="ApiKeysLocal.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
