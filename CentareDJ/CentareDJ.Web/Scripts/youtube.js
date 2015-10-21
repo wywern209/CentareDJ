@@ -1,4 +1,15 @@
-﻿// 2. This code loads the IFrame Player API code asynchronously.
+﻿$(function () {
+    $('#AddSong').click(function () {
+        var url = $('#addSongUrl').val()
+        if (url) {
+            var videoId = url.split("=")[1];
+            console.log(videoId);
+            vidids.push(videoId);
+        }
+        $('#addSongUrl').val("");
+    });
+});
+// 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
@@ -8,7 +19,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
 var player;
-var vidids = ['vZv9-TWdBJM', '5hEh9LiSzow', 'zzzzzz']
+var vidids = ['vZv9-TWdBJM', '5hEh9LiSzow']
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '390',
@@ -37,7 +48,7 @@ function onPlayerReady(event) {
 //    the player should play for six seconds and then stop.
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED && vidids.length > 0) {
-        var playersrc = $("#player").attr("src", "https://www.youtube.com/embed/"+vidids.shift()+"?enablejsapi=1");
+        player.loadVideoById(vidids.shift());       
     }
 }
 function stopVideo() {
