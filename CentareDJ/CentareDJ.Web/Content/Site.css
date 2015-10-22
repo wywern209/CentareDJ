@@ -25,3 +25,8 @@
 {
     clear:left;
 }
+
+#SongNotPlaying{
+    width: 640px;
+    height: 390px;
+}

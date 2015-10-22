@@ -1,34 +1,52 @@
 ﻿$(function () {
-    $('#AddSong').click(function () {
-        var url = $('#addSongUrl').val()
+    var videoHub = $.connection.videoHub;
+    $('#player').hide();
+
+    videoHub.client.AddVideo = function (videoId) {
+        $('#player').show();
+        $('#SongNotPlaying').hide();
+        vidids.push(videoId);
+        if(vidids.length == 1)
+        {
+            player.loadVideoById(vidids.shift());
+        }
+    };
+    var addSong = function () {
+        console.log("event fired!");
+        var url = $('#AddSongUrl').val()
         if (url) {
+            console.log("event fired!");
+            var videoId = "";
             if (url.indexOf("&") == -1) {
-                var videoId = url.split("=")[1];
-                vidids.push(videoId);
+                videoId = url.split("=")[1];
             }
             else {
-                var videoId = url.substring(url.indexOf("=") + 1, url.indexOf("&"));
-                console.log(videoId);
-                vidids.push(videoId);
+                videoId = url.substring(url.indexOf("=") + 1, url.indexOf("&"));
             }
-           
+
+            videoHub.server.addVideo(videoId);
         }
-        $('#addSongUrl').val("");
+        $('#AddSongUrl').val("");
+    };
+    $('#AddSong').click(addSong);
+    $('#AddSongUrl').keyup(function (event) {
+        if (event.keyCode == 13) {
+            addSong();
+        }
     });
+
 });
-// 2. This code loads the IFrame Player API code asynchronously.
+
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-// 3. This function creates an <iframe> (and YouTube player)
-//    after the API code downloads.
 var player;
-var vidids = ['vZv9-TWdBJM', '5hEh9LiSzow']
+var vidids = []
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-        height: '390',
+        height: '360',
         width: '640',
         videoId: vidids.shift(),
         playerVars: {
@@ -44,17 +62,22 @@ function onYouTubeIframeAPIReady() {
     });
 }
 
-// 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
     event.target.playVideo();
 }
 
-// 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED && vidids.length > 0) {
+        $('#SongNotPlaying').hide();
+        $('#player').show()
         player.loadVideoById(vidids.shift());       
+    }
+    else if (event.data == YT.PlayerState.ENDED && vidids.length == 0) {
+        $('#player').hide()
+        $('#SongNotPlaying').show();
+    }
+    else {
+        return;
     }
 }
 function stopVideo() {
