@@ -1,5 +1,55 @@
-﻿$(function () {
-    var videoHub = $.connection.videoHub;
+﻿
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var videoHub;
+var player;
+var vidids = []
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: vidids.shift(),
+        playerVars: {
+            controls: 1,
+            fs: 0,
+            disablekb: 0,
+
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    event.target.playVideo();
+}
+
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED && vidids.length > 0) {
+        $('#SongNotPlaying').hide();
+        $('#player').show()
+        var nextId = vidids[0];
+        player.loadVideoById(vidids.shift());
+        videoHub.server.
+    }
+    else if (event.data == YT.PlayerState.ENDED && vidids.length == 0) {
+        $('#player').hide()
+        $('#SongNotPlaying').show();
+    }
+    else {
+        return;
+    }
+}
+function stopVideo() {
+    player.stopVideo();
+}
+$(function () {
+    videoHub = $.connection.videoHub;
     $('#player').hide();
 
     videoHub.client.AddVideo = function (videoId) {
@@ -36,50 +86,3 @@
     });
 
 });
-
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-var player;
-var vidids = []
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-        height: '360',
-        width: '640',
-        videoId: vidids.shift(),
-        playerVars: {
-            controls: 1,
-            fs: 0,
-            disablekb: 0,
-
-        },
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-        }
-    });
-}
-
-function onPlayerReady(event) {
-    event.target.playVideo();
-}
-
-function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.ENDED && vidids.length > 0) {
-        $('#SongNotPlaying').hide();
-        $('#player').show()
-        player.loadVideoById(vidids.shift());       
-    }
-    else if (event.data == YT.PlayerState.ENDED && vidids.length == 0) {
-        $('#player').hide()
-        $('#SongNotPlaying').show();
-    }
-    else {
-        return;
-    }
-}
-function stopVideo() {
-    player.stopVideo();
-}
