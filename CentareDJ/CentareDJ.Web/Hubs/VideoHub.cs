@@ -17,6 +17,15 @@ namespace CentareDJ.Web.Hubs
         static Dictionary<string, VideoData> Videos = new Dictionary<string, VideoData>();
         static string currentlyPlaying = null;
         static DateTime startTime = DateTime.UtcNow;
+        
+        public void Connect()
+        {
+            if(currentlyPlaying != null)
+            {
+                Clients.Caller.onConnect(currentlyPlaying, DateTime.UtcNow.Subtract(startTime).TotalSeconds, VideoIds.ToArray());            
+            }
+        }
+
         public void GetVideoInfo(string ids)
         {
             if (ids != String.Empty)
@@ -40,11 +49,13 @@ namespace CentareDJ.Web.Hubs
 
         public void PlayNextVideo()
         {
+            currentlyPlaying = VideoIds.Dequeue();
+            startTime = DateTime.UtcNow;
         }
 
         private List<VideoData> GetInfoFromAPI(string ids)
         {
-            return "";
+            return null;
         }
     }
 }

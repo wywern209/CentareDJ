@@ -11,7 +11,7 @@ namespace CentareDJ.Web.Models
 
         public int? Duration { get; set; }
 
-        public string ThumbnailUrl { get; set}
+        public string ThumbnailUrl { get; set; }
 
     }
 }

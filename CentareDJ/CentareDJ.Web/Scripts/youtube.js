@@ -7,6 +7,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var videoHub;
 var player;
 var vidids = []
+var currentlyPlaying = false;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '360',
@@ -31,11 +32,12 @@ function onPlayerReady(event) {
 
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED && vidids.length > 0) {
+        currentlyPlaying = true;
         $('#SongNotPlaying').hide();
         $('#player').show()
         var nextId = vidids[0];
         player.loadVideoById(vidids.shift());
-        videoHub.server.
+        videoHub.server.playNextVideo();
     }
     else if (event.data == YT.PlayerState.ENDED && vidids.length == 0) {
         $('#player').hide()
@@ -52,12 +54,27 @@ $(function () {
     videoHub = $.connection.videoHub;
     $('#player').hide();
 
+    $.connection.hub.start().done(function () {
+        videoHub.server.connect();
+    });
+
+    videoHub.client.onConnect = function (videoId, secondsElapsed, queue) {
+        vidids = queue;
+        player.loadVideoById(videoId, secondsElapsed);
+        $('#player').show();
+        $('#SongNotPlaying').hide();
+        currentlyPlaying = true;
+    }
+
     videoHub.client.AddVideo = function (videoId) {
         $('#player').show();
         $('#SongNotPlaying').hide();
         vidids.push(videoId);
-        if(vidids.length == 1)
+        if(vidids.length === 1 && !currentlyPlaying)
         {
+
+            currentlyPlaying = true;
+            console.log(vidids, currentlyPlaying);
             player.loadVideoById(vidids.shift());
         }
     };
